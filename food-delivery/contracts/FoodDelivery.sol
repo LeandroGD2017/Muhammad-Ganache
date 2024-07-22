@@ -23,7 +23,7 @@ contract FoodDelivery {
     event OrderAccepted(uint id, address deliveryPerson);
     event OrderCompleted(uint id);
 
-
+    //access only for admin
     modifier onlyAdmin() {
         require(msg.sender == admin, "Only admin can perform this action");
         _;
@@ -32,5 +32,22 @@ contract FoodDelivery {
 
     constructor() {
         admin = msg.sender;
+    }
+
+    // allows a costomer place a order.
+    function placeOrder(string memory _foodItem, uint _price) public {
+        orderCount++;
+        orders[orderCount] = Order(orderCount, msg.sender, _foodItem, _price, address(0), false, false);
+        emit OrderPlaced(orderCount, msg.sender, foodItem, _price);
+    }
+
+    // allows a delivery person to accept an order
+    function acceptOrder(uint _orderId) public {
+        Order storage order = orders[_orderId];
+        require(order.Id == _orderId, "Order does not exist");
+        require(!order.isAccepted, "Order already accepted");
+        order.deliveryPerson = msg.sernder;
+        order.isAccepted =true;
+        emit OrderAccepted(_orderId, msg.sender);
     }
 }
