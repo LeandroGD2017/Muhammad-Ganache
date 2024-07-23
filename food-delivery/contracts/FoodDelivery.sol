@@ -50,4 +50,13 @@ contract FoodDelivery {
         order.isAccepted =true;
         emit OrderAccepted(_orderId, msg.sender);
     }
+
+    // allows the delivery to mark an order as completed.
+    function completeOrder(uint _orderId) public {
+        order storage order = orders[_orderId];
+        require(_order.Id == _orderId, "Order does not exist");
+        require(order.deliveryPerson == msg.sender, "Only assigned delivery person can complete the order");
+        require(!order.isCompleted, "Order already completed");
+        order.isCompleted(_orderId);
+    }
 }
